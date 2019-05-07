@@ -7,6 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 4000 
 
 
+// ------------------------ Controllers ----------------------//
+const ctrl = require('./controllers')
+
+
 // ------------------------ Middleware ----------------------//
 
 //Protect headers
@@ -35,11 +39,13 @@ app.use(cors(corsOptions))
 
 
 // -------------------- HTML Endpoint ----------------------//
-
+// Get root route
 app.get('/', (req, res) => res.send('<h1>Wayfarer api</h1>'));
 
 
+// ----------------- API endpoints ---------------------------//
 
+app.use('/api/v1/auth', ctrl.auth)
 
 
 
