@@ -535,6 +535,9 @@ const postsData = [
 
 
 const seedDatabase = async () => {
+  // Try catch block
+  try {
+
     // Delete all Users
     const deletedUsers = await db.User.deleteMany()
     console.log(`Delete ${deletedUsers.deletedCount }`)
@@ -549,9 +552,37 @@ const seedDatabase = async () => {
     // Hash User passwords 
     for (const user in usersData) {
         const hashedPassword = bcrypt.hashSync(usersData[user].password, 10)
+        console.log('users passwords hashed');
     }
+    
+    //Create new Users 
+    const newUsers = await db.User.create(usersData)
+    console.log(`created ${newUsers.length} new users`)
+    //Create new Cities
+    const newCities = await db.City.create(citiesData)
+    console.log(`created ${newCities.length} new cities`)
+    // Create  new posts
+    const newPosts = await db.Post.create(postsData) 
+    console.log(`created ${newPosts.length} new posts`)
+
+    const randonIndex = arr => Math.floor(Math.random() * arr.length)
+
+    // Associate Users/Cities/Posts 
+    console.log('Randon Index = ', randonIndex(newPosts))
+    for (const post in newPosts) {
+      newPosts[post].user_id = newUsers[randonIndex(newUsers)]
+      newPosts[post].city_id = newCities[randonIndex(newCities)]
+
+      // Save Post
+      await newPosts[post].save(); 
+    }
+    console.log('Users, cities, and posts successfully associated')
 
     console.log('success')
+    process.exit()
+} catch(err) {
+  console.log(err)
 }
+  }
 
 seedDatabase(); 
